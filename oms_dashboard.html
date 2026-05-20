@@ -1,1306 +1,1641 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-  <title>Leopards OMS 2.0 | Operations Dashboard</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Leopards Employee Card</title>
   <style>
-    :root{
-      --leopards-red:#be123c;
-      --leopards-yellow:#f59e0b;
-
-      --sidebar-dark:#0f172a;
-      --sidebar-accent:#1e293b;
-
-      --bg-light:#f1f5f9;
-      --white:#fff;
-
-      --text-main:#0f172a;
-      --text-muted:#94a3b8;
-      --text-secondary:#64748b;
-
-      --border-light:#cbd5e1;
-      --radius-lg:16px;
-
-      --shadow-card:0 4px 6px -1px rgba(0,0,0,.10),0 2px 4px -1px rgba(0,0,0,.06);
-      --shadow-soft:0 1px 2px rgba(0,0,0,.05);
-
-      --focus:0 0 0 3px rgba(245,158,11,.25);
+    * {
+      box-sizing: border-box;
     }
 
-    *{ box-sizing:border-box; margin:0; padding:0; }
-
-    body{
-      font-family: Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;
-      background:var(--bg-light);
-      color:var(--text-main);
-      line-height:1.5;
-      height:100vh;
-      overflow:hidden;
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, Helvetica, sans-serif;
+      color: #172033;
+      background: #eef2f6;
     }
 
-    .app{
-      display:flex;
-      width:100%;
-      height:100%;
-      min-height:0;
+    .page {
+      width: min(1120px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 28px 0;
+      display: grid;
+      grid-template-columns: minmax(280px, 420px) minmax(300px, 1fr);
+      gap: 22px;
+      align-items: start;
     }
 
-    /* Sidebar */
-    .sidebar{
-      width:280px;
-      background:var(--sidebar-dark);
-      color:var(--white);
-      display:flex;
-      flex-direction:column;
-      border-right:1px solid rgba(255,255,255,.05);
-      flex-shrink:0;
-      min-height:0;
+    .panel,
+    .preview-shell {
+      background: #fff;
+      border: 1px solid #d9e0e8;
+      border-radius: 8px;
+      box-shadow: 0 14px 36px rgba(25, 36, 55, 0.08);
     }
 
-    .logo{
-      margin:14px;
-      padding:34px 18px 22px;
-      border-radius:14px;
-      font-weight:900;
-      font-size:24px;
-      letter-spacing:-.8px;
-      background:linear-gradient(135deg,var(--leopards-red) 0%, #9f1239 100%);
-      box-shadow:var(--shadow-soft);
-      display:flex;
-      flex-direction:column;
-      gap:8px;
+    .panel {
+      padding: 20px;
     }
 
-    .logo small{
-      font-size:.62rem;
-      letter-spacing:2.2px;
-      font-weight:500;
-      color:rgba(255,255,255,.80);
+    .topline {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18px;
     }
 
-    .nav{
-      padding:10px 14px 0;
-      overflow:auto;
-      min-height:0;
+    .brand-mark {
+      width: 48px;
+      height: 48px;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      font-weight: 900;
+      color: #111;
+      background: #ffc400;
+      border: 3px solid #111;
     }
 
-    .nav-section-title{
-      padding:10px 12px 6px;
-      color:rgba(255,255,255,.65);
-      font-size:.72rem;
-      letter-spacing:.06em;
-      text-transform:uppercase;
-      font-weight:700;
+    h1 {
+      margin: 0;
+      font-size: 24px;
+      line-height: 1.15;
     }
 
-    .nav-item, .nav-group-header{
-      width:100%;
-      border:0;
-      background:transparent;
-      color:var(--text-muted);
-      cursor:pointer;
-      padding:12px 16px;
-      border-radius:12px;
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      transition:background .15s ease, color .15s ease, transform .05s ease;
-      font-weight:650;
-      font-size:.9rem;
+    .subtitle {
+      margin: 4px 0 0;
+      color: #5d6878;
+      font-size: 14px;
     }
 
-    .nav-item:hover, .nav-group-header:hover{
-      background:var(--sidebar-accent);
-      color:var(--white);
+    form {
+      display: grid;
+      gap: 13px;
     }
 
-    .nav-item.active{
-      background:rgba(190,18,60,.16);
-      color:#fb7185;
-      font-weight:750;
+    label {
+      display: grid;
+      gap: 6px;
+      color: #344052;
+      font-size: 13px;
+      font-weight: 700;
     }
 
-    .nav-item.sub{
-      padding:10px 16px 10px 44px;
-      font-size:.82rem;
-      font-weight:600;
-      color:#94a3b8;
+    input,
+    select,
+    textarea {
+      width: 100%;
+      border: 1px solid #cfd7e2;
+      border-radius: 6px;
+      padding: 11px 12px;
+      color: #172033;
+      background: #fbfcfe;
+      font: inherit;
+      outline: none;
     }
 
-    .nav-group{
-      margin-bottom:8px;
-      border-radius:14px;
+    textarea {
+      resize: vertical;
+      min-height: 72px;
     }
 
-    .nav-group-header{
-      padding:12px 16px;
-      color:#e2e8f0;
-      font-weight:800;
-      background:transparent;
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: #f0b400;
+      box-shadow: 0 0 0 3px rgba(255, 196, 0, 0.2);
     }
 
-    .nav-group-header .chev{
-      opacity:.6;
-      font-size:.75rem;
-      transform:rotate(0deg);
-      transition:transform .2s ease;
-    }
-    .nav-group.open .nav-group-header .chev{ transform:rotate(180deg); }
-
-    .sub-menu{
-      display:none;
-      padding:6px 0 6px;
-      background:rgba(0,0,0,.14);
-      border:1px solid rgba(255,255,255,.04);
-      border-radius:14px;
-      margin:8px 2px 0;
-    }
-    .nav-group.open .sub-menu{ display:block; }
-
-    .sidebar-footer{
-      padding:18px 14px;
-      text-align:center;
-      font-size:.75em;
-      color:#94a3b8;
-      border-top:1px solid rgba(255,255,255,.08);
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
     }
 
-    /* Main */
-    .main{
-      flex:1;
-      display:flex;
-      flex-direction:column;
-      min-width:0;
-      min-height:0;
-      background:var(--bg-light);
+    .photo-input {
+      border: 1px dashed #aeb8c6;
+      background: #f8fafc;
+      padding: 14px;
+      border-radius: 8px;
     }
 
-    header{
-      background:var(--white);
-      padding:18px 28px;
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      border-bottom:1px solid var(--border-light);
-      min-height:86px;
-      gap:16px;
-      flex-shrink:0;
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 4px;
     }
 
-    .user-info{
-      line-height:1.25;
-      font-size:.95rem;
+    button {
+      min-height: 42px;
+      border: 0;
+      border-radius: 6px;
+      padding: 0 16px;
+      cursor: pointer;
+      font-weight: 800;
+      font-size: 14px;
     }
 
-    .user-info strong{
-      color:var(--sidebar-dark);
+    .primary {
+      background: #ffc400;
+      color: #111;
+      border: 1px solid #e0aa00;
     }
 
-    .header-right{
-      display:flex;
-      align-items:center;
-      gap:14px;
-      flex-wrap:wrap;
-      justify-content:flex-end;
+    .secondary {
+      background: #172033;
+      color: #fff;
     }
 
-    .expiry-tag{
-      color:var(--leopards-red);
-      font-weight:900;
-      font-size:.75rem;
-      background:#fef2f2;
-      padding:6px 12px;
-      border-radius:999px;
-      border:1px solid #fee2e2;
-      white-space:nowrap;
+    .muted {
+      color: #647184;
+      font-size: 12px;
+      line-height: 1.45;
+      margin: 2px 0 0;
     }
 
-    .current-datetime{
-      font-size:.9rem;
-      color:var(--text-secondary);
-      white-space:nowrap;
+    .preview-shell {
+      padding: 24px;
+      display: grid;
+      gap: 18px;
+      justify-items: stretch;
     }
 
-    .page{
-      flex:1;
-      overflow:auto;
-      padding:26px 28px 32px;
-      min-height:0;
+    .preview-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(260px, 390px));
+      gap: 18px;
+      justify-content: center;
+      align-items: start;
     }
 
-    .page h2{
-      font-size:1.85rem;
-      font-weight:900;
-      letter-spacing:-.02em;
-      margin-bottom:10px;
+    .side-title {
+      margin: 0 0 10px;
+      text-align: center;
+      color: #4f5b6d;
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      text-transform: uppercase;
     }
 
-    .page h3{
-      font-size:1rem;
-      font-weight:650;
-      color:var(--text-secondary);
-      margin-bottom:22px;
+    .card-wrap {
+      width: min(100%, 390px);
+      aspect-ratio: 390 / 610;
+      display: grid;
+      place-items: center;
     }
 
-    /* Cards / Metrics */
-    .metrics-grid{
-      display:grid;
-      grid-template-columns:repeat(auto-fit, minmax(210px,1fr));
-      gap:18px;
-      margin:18px 0 28px;
+    .employee-card {
+      width: 390px;
+      height: 610px;
+      overflow: hidden;
+      border-radius: 18px;
+      position: relative;
+      background: #fff;
+      border: 1px solid #cfd7e2;
+      box-shadow: 0 18px 42px rgba(22, 31, 48, 0.18);
+      transform-origin: center;
     }
 
-    .card{
-      background:var(--white);
-      border:1px solid var(--border-light);
-      border-radius:var(--radius-lg);
-      box-shadow:var(--shadow-card);
+    .card-header {
+      height: 192px;
+      color: #111;
+      background: #111;
+      padding: 18px 20px;
+      position: relative;
     }
 
-    .metric{
-      padding:22px 22px;
-      transition:transform .2s ease;
-    }
-    .metric:hover{ transform:translateY(-3px); }
-
-    .metric h4{
-      font-size:.72rem;
-      text-transform:uppercase;
-      letter-spacing:.06em;
-      color:var(--text-muted);
-      margin-bottom:8px;
-      font-weight:850;
+    .leopard-photo {
+      position: absolute;
+      left: 16px;
+      right: 16px;
+      bottom: 14px;
+      height: 96px;
+      overflow: hidden;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #f5a900, #ffd34d 54%, #2a1c05);
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      box-shadow: inset 0 0 0 1px rgba(17, 17, 17, 0.16), 0 10px 22px rgba(0, 0, 0, 0.2);
     }
 
-    .metric .value{
-      font-size:2.25rem;
-      font-weight:950;
-      letter-spacing:-1px;
+    .leopard-photo svg {
+      width: 100%;
+      height: 100%;
+      display: block;
     }
 
-    /* Table */
-    .oms-table{
-      width:100%;
-      border-collapse:collapse;
-      background:var(--white);
-      border:1px solid var(--border-light);
-      border-radius:var(--radius-lg);
-      overflow:hidden;
-    }
-    .oms-table th, .oms-table td{
-      padding:14px 18px;
-      text-align:left;
-      font-size:.9rem;
-      border-bottom:1px solid rgba(203,213,225,.75);
-    }
-    .oms-table th{
-      background:#f8fafc;
-      color:var(--text-muted);
-      text-transform:uppercase;
-      font-size:.72rem;
-      font-weight:900;
-      letter-spacing:.05em;
-    }
-    .oms-table tbody tr:last-child td{ border-bottom:none; }
-
-    .oms-table tbody tr:not(.urgent-row):hover{ background:#f9f9f9; }
-
-    .urgent-row{ background:#fffced; }
-    .urgent-row td{ color:#856404; font-weight:800; }
-
-    /* Inputs + Buttons */
-    .search-input{
-      width:100%;
-      padding:10px 14px;
-      border:1px solid var(--border-light);
-      border-radius:10px;
-      font-size:.9rem;
-      box-shadow:inset 0 1px 3px rgba(0,0,0,.05);
-      transition:border-color .15s ease, box-shadow .15s ease;
-      background:var(--white);
-    }
-    .search-input:focus{
-      border-color:var(--leopards-yellow);
-      outline:none;
-      box-shadow:var(--focus);
+    .front-ribbon {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 132px;
+      height: 74px;
+      background: #ffc400;
+      clip-path: polygon(24% 0, 100% 0, 100% 100%, 0 0);
     }
 
-    .btn{
-      border:0;
-      cursor:pointer;
-      border-radius:10px;
-      padding:10px 14px;
-      font-weight:850;
-      transition:transform .05s ease, filter .15s ease, background .15s ease;
-      user-select:none;
-      white-space:nowrap;
+    .id-chip {
+      position: absolute;
+      right: 18px;
+      top: 18px;
+      z-index: 2;
+      background: #ffc400;
+      color: #111;
+      border-radius: 999px;
+      padding: 7px 12px;
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 1px;
     }
 
-    .btn:active{ transform:translateY(1px); }
-
-    .btn-primary{
-      background:var(--leopards-red);
-      color:var(--white);
-    }
-    .btn-primary:hover{ filter:brightness(.95); }
-
-    .btn-muted{
-      background:#7f8c8d;
-      color:#fff;
-    }
-
-    .btn-danger{
-      background:#e74c3c;
-      color:#fff;
-      padding:8px 10px;
-      font-size:.82rem;
-      border-radius:8px;
+    .card-header .logo {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      font-weight: 900;
+      font-size: 20px;
+      letter-spacing: 0;
+      color: #fff;
+      position: relative;
+      z-index: 2;
     }
 
-    .btn-info{
-      background:#3498db;
-      color:#fff;
-      padding:8px 10px;
-      font-size:.82rem;
-      border-radius:8px;
+    .logo-box {
+      width: 42px;
+      height: 42px;
+      border-radius: 7px;
+      border: 3px solid #111;
+      display: grid;
+      place-items: center;
+      background: #fff;
+      color: #111;
     }
 
-    /* Status pills */
-    .status-pill{
-      display:inline-block;
-      padding:4px 10px;
-      border-radius:999px;
-      font-size:.75em;
-      font-weight:950;
-      text-transform:uppercase;
-      white-space:nowrap;
-      border:1px solid rgba(0,0,0,.04);
-    }
-    .status-pill.urgent{ background:var(--leopards-yellow); color:#000; }
-    .status-pill.acknowledged{ background:#d7ffd7; color:#2e7d32; }
-    .status-pill.pending{ background:#fff3cd; color:#856404; }
-    .status-pill.closed{ background:#e0f2f7; color:#0288d1; }
-    .status-pill.verified{ background:#e8f5e9; color:#388e3c; }
-
-    /* Placeholder */
-    .placeholder{
-      background:var(--white);
-      border:1px solid var(--border-light);
-      border-radius:var(--radius-lg);
-      box-shadow:var(--shadow-card);
-      text-align:center;
-      padding:46px 22px;
-      color:var(--text-muted);
-      margin-top:20px;
+    .card-label {
+      margin-top: 13px;
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 1.8px;
+      text-transform: uppercase;
+      color: #ffc400;
+      position: relative;
+      z-index: 2;
     }
 
-    /* Generic layout helpers */
-    .row{
-      display:flex;
-      gap:14px;
-      flex-wrap:wrap;
-      align-items:center;
-      justify-content:space-between;
-      margin:12px 0 18px;
+    .photo-frame {
+      width: 138px;
+      height: 156px;
+      border-radius: 12px;
+      position: absolute;
+      top: 132px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #f4f6f9;
+      border: 5px solid #fff;
+      box-shadow: 0 10px 24px rgba(17, 17, 17, 0.18);
+      overflow: hidden;
+      display: grid;
+      place-items: center;
+      color: #6c7583;
+      text-align: center;
+      font-size: 13px;
+      font-weight: 700;
     }
 
-    .hint{
-      color:var(--text-secondary);
-      font-weight:700;
-      font-size:.9rem;
+    .photo-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: none;
     }
 
-    .upload-box{
-      border:2px dashed var(--border-light);
-      background:var(--white);
-      border-radius:14px;
-      padding:44px 20px;
-      text-align:center;
-      color:var(--text-secondary);
-      box-shadow:var(--shadow-card);
-      margin-top:16px;
+    .card-body {
+      padding: 134px 28px 24px;
+      text-align: center;
     }
 
-    .grid-2{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:18px;
+    .emp-name {
+      margin: 0;
+      font-size: 27px;
+      line-height: 1.12;
+      color: #111;
+      text-transform: uppercase;
+      overflow-wrap: anywhere;
     }
-    @media (max-width: 980px){
-      .sidebar{ width:250px; }
-      header{ padding:16px 18px; }
-      .page{ padding:22px 16px; }
-      .grid-2{ grid-template-columns:1fr; }
-      .nav-item.sub{ padding-left:34px; }
+
+    .emp-role {
+      margin: 8px 0 16px;
+      color: #d29d00;
+      font-size: 15px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .valid-badge {
+      display: inline-grid;
+      place-items: center;
+      min-height: 26px;
+      padding: 0 12px;
+      border-radius: 999px;
+      background: #111;
+      color: #ffc400;
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .detail-list {
+      display: grid;
+      gap: 7px;
+      text-align: left;
+      margin-top: 16px;
+    }
+
+    .detail-row {
+      display: grid;
+      grid-template-columns: 100px 1fr;
+      gap: 10px;
+      align-items: center;
+      min-height: 32px;
+      border-bottom: 1px solid #eef1f5;
+      font-size: 14px;
+    }
+
+    .detail-row strong {
+      color: #687386;
+      font-size: 12px;
+      text-transform: uppercase;
+    }
+
+    .detail-row span {
+      color: #172033;
+      font-weight: 700;
+      overflow-wrap: anywhere;
+    }
+
+    .card-footer {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 58px;
+      color: #fff;
+      background: #111;
+      display: grid;
+      place-items: center;
+      font-size: 13px;
+      font-weight: 800;
+      text-align: center;
+      padding: 0 22px;
+    }
+
+    .back-card {
+      background: #10131a;
+      color: #fff;
+      border-color: #10131a;
+    }
+
+    .back-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 18% 22%, rgba(255, 196, 0, 0.18) 0 42px, transparent 43px),
+        radial-gradient(circle at 82% 76%, rgba(255, 196, 0, 0.14) 0 54px, transparent 55px),
+        linear-gradient(160deg, rgba(255, 196, 0, 0.18), transparent 34%);
+      pointer-events: none;
+    }
+
+    .back-hero {
+      height: 218px;
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(135deg, #f2a900, #ffc400 55%, #402a06);
+    }
+
+    .back-hero svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .back-content {
+      position: relative;
+      padding: 22px 28px;
+      display: grid;
+      gap: 13px;
+    }
+
+    .back-brand {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      color: #ffc400;
+      font-size: 22px;
+      font-weight: 900;
+    }
+
+    .back-note {
+      margin: 0;
+      color: #dfe6f0;
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    .back-info {
+      display: grid;
+      gap: 10px;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .back-info span {
+      display: block;
+      color: #99a4b5;
+      font-size: 11px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 3px;
+    }
+
+    .signature-line {
+      height: 52px;
+      border-bottom: 2px solid #ffc400;
+      display: grid;
+      align-items: end;
+      color: #ffc400;
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+      padding-bottom: 7px;
+    }
+
+    .barcode {
+      height: 48px;
+      border-radius: 6px;
+      background:
+        linear-gradient(90deg,
+          #fff 0 4px, transparent 4px 8px,
+          #fff 8px 11px, transparent 11px 18px,
+          #fff 18px 26px, transparent 26px 31px,
+          #fff 31px 34px, transparent 34px 42px,
+          #fff 42px 51px, transparent 51px 56px,
+          #fff 56px 60px, transparent 60px 69px,
+          #fff 69px 78px, transparent 78px 84px,
+          #fff 84px 88px, transparent 88px 96px);
+      background-size: 96px 100%;
+      opacity: 0.95;
+    }
+
+    .status {
+      min-height: 18px;
+      color: #287442;
+      font-size: 13px;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .hidden-card {
+      position: fixed;
+      left: -9999px;
+      top: 0;
+      width: 390px;
+      height: 610px;
+      pointer-events: none;
+    }
+
+    @media (max-width: 860px) {
+      .page {
+        grid-template-columns: 1fr;
+      }
+
+      .preview-grid {
+        grid-template-columns: 1fr;
+        justify-items: center;
+      }
+
+      .employee-card {
+        transform: scale(var(--card-scale, 1));
+      }
+    }
+
+    @media (max-width: 440px) {
+      .grid-2 {
+        grid-template-columns: 1fr;
+      }
+
+      .preview-shell {
+        padding: 16px;
+      }
+
+      .card-wrap {
+        width: 100%;
+        overflow: hidden;
+      }
+    }
+
+    .card-wrap {
+      aspect-ratio: 390 / 572;
+    }
+
+    .employee-card {
+      height: 572px;
+      border-radius: 18px;
+      background: #f8f8f5;
+      border: 0;
+      box-shadow: 0 16px 34px rgba(0, 0, 0, 0.2);
+    }
+
+    .card-header {
+      height: 246px;
+      padding: 0;
+      background-image: url("reference-card.jpg");
+      background-size: 888px 592px;
+      background-position: -34px -6px;
+      background-repeat: no-repeat;
+    }
+
+    .card-header .logo,
+    .card-label,
+    .front-ribbon,
+    .id-chip,
+    .leopard-photo {
+      display: none;
+    }
+
+    .photo-frame {
+      width: 166px;
+      height: 166px;
+      top: 160px;
+      border-radius: 50%;
+      border: 5px solid #efb300;
+      background: #fff;
+      box-shadow: none;
+    }
+
+    .photo-frame img {
+      border-radius: 50%;
+    }
+
+    .card-body {
+      padding: 84px 56px 0;
+    }
+
+    .emp-name {
+      font-size: 21px;
+      line-height: 1.1;
+      letter-spacing: 0;
+      color: #080808;
+    }
+
+    .emp-role {
+      margin: 4px 0 14px;
+      color: #d8a600;
+      font-size: 13px;
+      letter-spacing: 0;
+    }
+
+    .valid-badge {
+      display: none;
+    }
+
+    .detail-list {
+      margin-top: 0;
+      gap: 2px;
+    }
+
+    .detail-row {
+      grid-template-columns: 112px 12px 1fr;
+      gap: 8px;
+      border-bottom: 0;
+      min-height: 20px;
+      font-size: 14px;
+    }
+
+    .detail-row::before {
+      content: ":";
+      grid-column: 2;
+      color: #111;
+      font-weight: 700;
+    }
+
+    .detail-row strong {
+      grid-column: 1;
+      grid-row: 1;
+      color: #111;
+      font-size: 14px;
+      font-weight: 400;
+      text-transform: none;
+    }
+
+    .detail-row span {
+      grid-column: 3;
+      grid-row: 1;
+      color: #111;
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+    .card-footer {
+      height: 64px;
+      bottom: 0;
+      background-image: url("reference-card.jpg");
+      background-size: 888px 592px;
+      background-position: -34px -514px;
+      background-repeat: no-repeat;
+      color: transparent;
+      font-size: 0;
+      padding: 0;
+    }
+
+    .back-card {
+      background: #f8f8f5;
+    }
+
+    .back-card::before {
+      display: none;
+    }
+
+    .back-hero {
+      height: 232px;
+      background-image: url("reference-card.jpg");
+      background-size: 888px 592px;
+      background-position: -464px -6px;
+      background-repeat: no-repeat;
+    }
+
+    .back-hero svg {
+      display: none;
+    }
+
+    .back-content {
+      padding: 30px 28px 0;
+      height: 340px;
+      background-image: url("reference-card.jpg");
+      background-size: 888px 592px;
+      background-position: -464px -238px;
+      background-repeat: no-repeat;
+      color: #111;
+      gap: 0;
+    }
+
+    .back-brand,
+    .back-note,
+    .back-info {
+      display: none;
+    }
+
+    .signature-line,
+    .barcode {
+      display: none;
     }
   </style>
 </head>
-
 <body>
-<div class="app">
-  <aside class="sidebar">
-    <div class="logo">OMS 2.0 <small>OPERATIONS SYSTEM</small></div>
-
-    <div class="nav" id="navRoot">
-      <div class="nav-section-title">Menu</div>
-
-      <div class="nav-item active" data-tab="Home" role="button" tabindex="0">HOME</div>
-
-      <div class="nav-group" data-group="Debriefing">
-        <div class="nav-group-header" role="button" tabindex="0" onclick="window.__oms.toggleGroup(this)">
-          DEBRIEFING <span class="chev">▼</span>
-        </div>
-        <div class="sub-menu">
-          <div class="nav-item sub" data-tab="Debriefing" role="button" tabindex="0">DASHBOARD</div>
-          <div class="nav-item sub" data-tab="Debriefing-Add Pending" role="button" tabindex="0">ADD PENDING</div>
-          <div class="nav-item sub" data-tab="Debriefing-Add Delivered" role="button" tabindex="0">ADD DELIVERED</div>
-          <div class="nav-item sub" data-tab="Debriefing-Delete Status" role="button" tabindex="0">DELETE STATUS</div>
+  <main class="page">
+    <section class="panel">
+      <div class="topline">
+        <div class="brand-mark">LCS</div>
+        <div>
+          <h1>Leopards Employee Card</h1>
+          <p class="subtitle">Details fill karo, neeche card ready ho jayega.</p>
         </div>
       </div>
 
-      <div class="nav-group" data-group="Leopards">
-        <div class="nav-group-header" role="button" tabindex="0" onclick="window.__oms.toggleGroup(this)">
-          LEOPARDS <span class="chev">▼</span>
-        </div>
-        <div class="sub-menu">
-          <div class="nav-item sub" data-tab="Leopards-General" role="button" tabindex="0">LEOPARDS DSE - GENERAL</div>
-          <div class="nav-item sub" data-tab="Leopards-COD Shift" role="button" tabindex="0">LEOPARDS DSE - COD SHIFT</div>
-          <div class="nav-item sub" data-tab="Leopards-OSA" role="button" tabindex="0">LEOPARDS DSE - OSA</div>
-          <div class="nav-item sub" data-tab="Leopards-Upfront Rider" role="button" tabindex="0">LEOPARDS DSE - UPFRONT RIDER</div>
-        </div>
-      </div>
+      <form id="employeeForm">
+        <label>
+          Employee Photo
+          <input class="photo-input" id="photoInput" type="file" accept="image/*">
+        </label>
 
-      <div class="nav-group" data-group="Inter Transfer">
-        <div class="nav-group-header" role="button" tabindex="0" onclick="window.__oms.toggleGroup(this)">
-          INTER TRANSFER <span class="chev">▼</span>
-        </div>
-        <div class="sub-menu">
-          <div class="nav-item sub" data-tab="Inter Transfer" role="button" tabindex="0">MANAGE TRANSFERS</div>
-          <div class="nav-item sub" data-tab="Inter Transfer-RTN" role="button" tabindex="0">INTER TRANSFER - RTN</div>
-        </div>
-      </div>
+        <label>
+          Employee Name
+          <input id="nameInput" type="text" placeholder="e.g. Ali Raza" maxlength="34">
+        </label>
 
-      <div class="nav-item" data-tab="Return to Shipper DSE" role="button" tabindex="0">RETURN TO SHIPPER DSE</div>
-      <div class="nav-item" data-tab="Rider Mobile Shipments" role="button" tabindex="0">RIDER MOBILE SHIPMENTS</div>
-      <div class="nav-item" data-tab="Mobile API Log" role="button" tabindex="0">MOBILE API LOG</div>
-      <div class="nav-item" data-tab="Update Missing Signs" role="button" tabindex="0">UPDATE MISSING SIGNS</div>
-      <div class="nav-item" data-tab="Realtime Activity" role="button" tabindex="0">REALTIME ACTIVITY</div>
-      <div class="nav-item" data-tab="Control Tower" role="button" tabindex="0">CONTROL TOWER</div>
-      <div class="nav-item" data-tab="Sheet Verification" role="button" tabindex="0">SHEET VERIFICATION</div>
+        <div class="grid-2">
+          <label>
+            Employee ID
+            <input id="idInput" type="text" placeholder="27744" maxlength="18">
+          </label>
 
-      <div class="nav-group" data-group="Reports">
-        <div class="nav-group-header" role="button" tabindex="0" onclick="window.__oms.toggleGroup(this)">
-          REPORTS <span class="chev">▼</span>
-        </div>
-        <div class="sub-menu">
-          <div class="nav-item sub" data-tab="Reports-Debriefing Report" role="button" tabindex="0">DEBRIEFING REPORT</div>
-          <div class="nav-item sub" data-tab="Reports-Assign Runsheet" role="button" tabindex="0">ASSIGN RUNSHEET</div>
-          <div class="nav-item sub" data-tab="Reports-Proof of Delivery" role="button" tabindex="0">PROOF OF DELIVERY</div>
-          <div class="nav-item sub" data-tab="Reports-OSA Assign Report" role="button" tabindex="0">OSA ASSIGN REPORT</div>
-          <div class="nav-item sub" data-tab="Reports-Missing Signatures" role="button" tabindex="0">MISSING SIGNATURES</div>
-          <div class="nav-item sub" data-tab="Reports-Missing Geo Coords" role="button" tabindex="0">MISSING GEO COORDS</div>
-          <div class="nav-item sub" data-tab="Reports-Transport Mode Report" role="button" tabindex="0">TRANSPORT MODE REPORT</div>
-          <div class="nav-item sub" data-tab="Reports-Shipper Advice Report" role="button" tabindex="0">SHIPPER ADVICE REPORT</div>
-          <div class="nav-item sub" data-tab="Reports-CN Booking Detail" role="button" tabindex="0">CN BOOKING DETAIL</div>
-          <div class="nav-item sub" data-tab="Reports-Sheet Verification" role="button" tabindex="0">SHEET VERIFICATION</div>
-          <div class="nav-item sub" data-tab="Reports-DR Server" role="button" tabindex="0">DR Server</div>
-          <div class="nav-item sub" data-tab="Reports-Runsheet Archive By CNs" role="button" tabindex="0">RUNSHEET ARCHIVE BY CNs</div>
-          <div class="nav-item sub" data-tab="Reports-Realtime Activity" role="button" tabindex="0">REALTIME ACTIVITY</div>
-          <div class="nav-item sub" data-tab="Reports-Runsheet Archive" role="button" tabindex="0">RUNSHEET ARCHIVE</div>
-          <div class="nav-item sub" data-tab="Reports-Online Assign Graph" role="button" tabindex="0">ONLINE ASSIGN GRAPH</div>
-          <div class="nav-item sub" data-tab="Reports-Online History Trend" role="button" tabindex="0">ONLINE HISTORY TREND</div>
-          <div class="nav-item sub" data-tab="Reports-QSR As Of Date" role="button" tabindex="0">QSR - AS OF DATE</div>
-          <div class="nav-item sub" data-tab="Reports-Live Field Summary" role="button" tabindex="0">LIVE FIELD SUMMARY</div>
-        </div>
-      </div>
-
-      <div class="nav-group" data-group="Summary">
-        <div class="nav-group-header" role="button" tabindex="0" onclick="window.__oms.toggleGroup(this)">
-          SUMMARY <span class="chev">▼</span>
-        </div>
-        <div class="sub-menu">
-          <div class="nav-item sub" data-tab="Summary-Performance" role="button" tabindex="0">PERFORMANCE SUMMARY</div>
-          <div class="nav-item sub" data-tab="Summary-Mobile Delivery" role="button" tabindex="0">MOBILE DELIVERY</div>
-          <div class="nav-item sub" data-tab="Summary-Performance Assign" role="button" tabindex="0">PERFORMANCE ASSIGN SUMMARY</div>
-          <div class="nav-item sub" data-tab="Summary-Balancesheet" role="button" tabindex="0">BALANCESHEET</div>
-          <div class="nav-item sub" data-tab="Summary-E2E" role="button" tabindex="0">E2E SUMMARY</div>
-          <div class="nav-item sub" data-tab="Summary-Hub Balance" role="button" tabindex="0">HUB BALANCE</div>
-          <div class="nav-item sub" data-tab="Summary-OSA" role="button" tabindex="0">OSA SUMMARY</div>
-          <div class="nav-item sub" data-tab="Summary-Overall" role="button" tabindex="0">OVERALL SUMMARY</div>
-          <div class="nav-item sub" data-tab="Summary-Data Upload" role="button" tabindex="0">DATA UPLOAD REPORT</div>
-        </div>
-      </div>
-
-      <div class="nav-group" data-group="Setup">
-        <div class="nav-group-header" role="button" tabindex="0" onclick="window.__oms.toggleGroup(this)">
-          SETUP <span class="chev">▼</span>
-        </div>
-        <div class="sub-menu">
-          <div class="nav-item sub" data-tab="Setup-Users" role="button" tabindex="0">USERS</div>
-          <div class="nav-item sub" data-tab="Setup-Riders" role="button" tabindex="0">RIDERS</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="sidebar-footer">© 2017 Leopards (Pvt.) Ltd.</div>
-  </aside>
-
-  <main class="main">
-    <header>
-      <div class="user-info">
-        <div>Logged in user: <strong id="userName">ayaz</strong></div>
-        <div>Station: <strong id="stationName">Attock (00035)</strong></div>
-      </div>
-      <div class="header-right">
-        <span class="expiry-tag">Password Expiry: 13-May-2026</span>
-        <span class="current-datetime" id="current-datetime"></span>
-      </div>
-    </header>
-
-    <section class="page" id="main-display"></section>
-
-    <div style="padding:12px 28px;border-top:1px solid var(--border-light);background:#fff;display:flex;justify-content:flex-end;">
-      <span style="color:#64748b;font-weight:700;">
-        Leopards (Pvt.) Ltd. © 2017 |
-        <a href="https://leopardsoms.pk" style="color:var(--leopards-red);text-decoration:none;">leopardsoms.pk</a>
-      </span>
-    </div>
-  </main>
-</div>
-
-<script>
-  // Global namespace to avoid polluting window
-  window.__oms = window.__oms || {};
-
-  // ---------------- Mock Data ----------------
-  window.__oms.state = {
-    exceptions: [
-      { id:'1', shipmentId:'AT10293840', reason:'Address Incomplete', status:'Urgent' },
-      { id:'2', shipmentId:'AT10293850', reason:'Customer Refused', status:'Urgent' },
-      { id:'3', shipmentId:'AT10293860', reason:'Vehicle Breakdown', status:'Urgent' },
-      { id:'4', shipmentId:'AT10293841', reason:'Address Incomplete', status:'Urgent' },
-      { id:'5', shipmentId:'AT10293851', reason:'Customer Refused', status:'Urgent' },
-      { id:'6', shipmentId:'AT10293861', reason:'Vehicle Breakdown', status:'Urgent' }
-    ],
-    runSheets: [
-      { id:'RS-001', courier:'Zahid Khan', total:45, delivered:40, status:'Pending' },
-      { id:'RS-002', courier:'Imran Ali', total:30, delivered:30, status:'Closed' },
-      { id:'RS-003', courier:'Ali Raza', total:50, delivered:48, status:'Pending' },
-      { id:'RS-004', courier:'Kamran Khan', total:35, delivered:32, status:'Pending' }
-    ]
-  };
-
-  // ---------------- Helpers ----------------
-  __oms.byId = (id) => document.getElementById(id);
-
-  __oms.escape = (v) => String(v ?? '');
-
-  __oms.updateDateTime = () => {
-    const now = new Date();
-    const options = { year:'numeric', month:'long', day:'numeric', hour:'2-digit', minute:'2-digit', second:'2-digit' };
-    __oms.byId('current-datetime').textContent = now.toLocaleDateString('en-US', options);
-  };
-
-  __oms.toggleGroup = (el) => {
-    const group = el.closest('.nav-group');
-    if (!group) return;
-    group.classList.toggle('open');
-  };
-
-  __oms.setActiveNav = (tab) => {
-    document.querySelectorAll('.nav-item').forEach(el => {
-      const elTab = el.getAttribute('data-tab');
-      el.classList.toggle('active', elTab === tab);
-    });
-  };
-
-  __oms.switchTab = (tabName) => {
-    __oms.setActiveNav(tabName);
-
-    const display = __oms.byId('main-display');
-    const render = __oms.pages[tabName] || (() => __oms.renderGenericPlaceholder(tabName, "This module is currently under development or configuration."));
-    display.innerHTML = render();
-    // After re-render, attach page-level handlers safely
-    __oms.hydratePage(tabName);
-  };
-
-  // Status pill
-  __oms.renderStatusPill = (status) => {
-    const s = String(status || '').toLowerCase();
-    const cls =
-      s === 'urgent' ? 'urgent' :
-      s === 'acknowledged' ? 'acknowledged' :
-      s === 'pending' ? 'pending' :
-      s === 'closed' ? 'closed' :
-      s === 'verified' ? 'verified' : 'pending';
-    return `<span class="status-pill ${cls}">${__oms.escape(status)}</span>`;
-  };
-
-  __oms.renderGenericPlaceholder = (title, description) => {
-    return `<div class="placeholder"><h2 style="font-size:1.35rem;margin-bottom:10px;color:var(--text-main);">${__oms.escape(title)}</h2><p style="color:var(--text-secondary);font-weight:650;">${__oms.escape(description)}</p></div>`;
-  };
-
-  // ---------------- Pages ----------------
-  __oms.pages = {
-    Home: () => {
-      const urgentCount = __oms.state.exceptions.filter(e => e.status === 'Urgent').length;
-      const metrics = `
-        <div class="card metric">
-          <h4>Active Couriers</h4>
-          <div class="value">18</div>
-        </div>
-        <div class="card metric">
-          <h4>Deliveries Today</h4>
-          <div class="value">450</div>
-        </div>
-        <div class="card metric">
-          <h4>Success Rate</h4>
-          <div class="value">94%</div>
-        </div>
-        <div class="card metric">
-          <h4>Urgent Exceptions</h4>
-          <div class="value">${urgentCount}</div>
-        </div>
-      `;
-      return `
-        <h2>Home Dashboard</h2>
-        <h3>Operational Overview</h3>
-        <div class="metrics-grid">${metrics}</div>
-        <div class="placeholder" style="text-align:left;">
-          <h2 style="font-size:1.25rem;color:var(--text-main);margin-bottom:8px;">Welcome to Leopards OMS 2.0</h2>
-          <p class="hint">
-            Station: <strong style="color:var(--text-main);">${__oms.escape(document.getElementById('stationName').textContent)}</strong>.
-            Authorized access only. Use the operations menu to book new shipments or manage manifests.
-          </p>
-        </div>
-      `;
-    },
-
-    Debriefing: () => {
-      const runSheetsRows = __oms.state.runSheets.map(rs => `
-        <tr>
-          <td style="font-weight:900;">${__oms.escape(rs.id)}</td>
-          <td>${__oms.escape(rs.courier)}</td>
-          <td style="font-weight:900;">${rs.delivered}/${rs.total}</td>
-          <td>${__oms.renderStatusPill(rs.status === 'Closed' ? 'Closed' : 'Pending')}</td>
-          <td>
-            ${rs.status === 'Pending'
-              ? `<button class="btn btn-primary" data-action="close-sheet" data-id="${__oms.escape(rs.id)}">Close Sheet</button>`
-              : `<button class="btn btn-muted" data-action="view-sheet" data-id="${__oms.escape(rs.id)}">View</button>`
-            }
-          </td>
-        </tr>
-      `).join('');
-
-      return `
-        <h2>Debriefing - Run Sheet Closure</h2>
-        <h3>Update shipment statuses and close daily courier run sheets.</h3>
-
-        <div class="row">
-          <div style="flex:1;min-width:260px;">
-            <input class="search-input" id="runSheetSearch" placeholder="Search Run Sheet ID (e.g., RS-001)..." />
-          </div>
-          <div>
-            <button class="btn btn-primary" id="clearRunSheet" style="background:#be123c;">Clear</button>
-          </div>
+          <label>
+            Department
+            <input id="deptInput" type="text" placeholder="Operations" maxlength="24">
+          </label>
         </div>
 
-        <table class="oms-table">
-          <thead>
-            <tr>
-              <th>Run Sheet ID</th>
-              <th>Courier</th>
-              <th>Load</th>
-              <th>Status</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody id="runsheet-table-body">${runSheetsRows}</tbody>
-        </table>
-      `;
-    },
+        <label>
+          Designation
+          <input id="roleInput" type="text" placeholder="Courier Officer" maxlength="28">
+        </label>
 
-    "Realtime Activity": () => `
-      <h2>Realtime Activity Monitoring</h2>
-      <h3>Live Tracking & Metrics</h3>
-      <div class="metrics-grid">
-        <div class="card metric"><h4>In Field</h4><div class="value">12</div></div>
-        <div class="card metric"><h4>Delays</h4><div class="value">2</div></div>
-        <div class="card metric"><h4>Delivered</h4><div class="value">142</div></div>
-      </div>
-      <div class="placeholder" style="height:320px;display:flex;align-items:center;justify-content:center;">
-        <p style="font-weight:900;color:var(--text-secondary);">[ Real-time GPS Map Visualization & Courier Status ]</p>
-      </div>
-    `,
+        <div class="grid-2">
+          <label>
+            CNIC
+            <input id="cnicInput" type="text" placeholder="37106-0184546-5" maxlength="18">
+          </label>
 
-    "Control Tower": () => {
-      const rows = __oms.state.exceptions.map(ex => `
-        <tr class="${ex.status === 'Urgent' ? 'urgent-row' : ''}">
-          <td><strong>${__oms.escape(ex.shipmentId)}</strong></td>
-          <td>${__oms.escape(ex.reason)}</td>
-          <td>${__oms.renderStatusPill(ex.status)}</td>
-          <td>
-            ${ex.status === 'Urgent'
-              ? `<button class="btn btn-primary" data-action="acknowledge" data-id="${__oms.escape(ex.id)}">Acknowledge</button>`
-              : `<button class="btn btn-muted" data-action="view-exception" data-id="${__oms.escape(ex.id)}">View</button>`
-            }
-          </td>
-        </tr>
-      `).join('');
-
-      return `
-        <h2>Control Tower - Exceptions & Escalations</h2>
-        <h3>Central hub for monitoring performance exceptions and handling urgent issues.</h3>
-
-        <div class="row">
-          <div style="flex:1;min-width:260px;">
-            <input class="search-input" id="shipmentSearch" placeholder="Search Shipment ID (e.g., AT10293840)..." />
-          </div>
-          <div>
-            <button class="btn btn-primary" id="clearShipment" style="background:#be123c;">Clear</button>
-          </div>
+          <label>
+            Contact No
+            <input id="phoneInput" type="tel" placeholder="0300 0000000" maxlength="18">
+          </label>
         </div>
 
-        <table class="oms-table">
-          <thead>
-            <tr>
-              <th>Shipment ID</th>
-              <th>Reason</th>
-              <th>Status</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody id="exception-table-body">${rows}</tbody>
-        </table>
-      `;
-    },
+        <label>
+          Date of Joining
+          <input id="joiningInput" type="text" placeholder="12-17-2021" maxlength="18">
+        </label>
 
-    "Sheet Verification": () => `
-      <h2>Sheet Verification</h2>
-      <h3>Validation of courier run sheets and delivery records to prevent documentation errors.</h3>
-      <div class="placeholder" style="text-align:left;">
-        <h2 style="font-size:1.1rem;color:var(--text-main);margin-bottom:8px;">No sheets pending</h2>
-        <p class="hint">No sheets pending for manual verification at this moment.</p>
-      </div>
-    `,
+        <div class="actions">
+          <button class="primary" type="button" id="downloadBtn">Both PDF</button>
+          <button class="secondary" type="button" id="frontPdfBtn">Front PDF</button>
+          <button class="secondary" type="button" id="backPdfBtn">Back PDF</button>
+          <button class="secondary" type="reset">Clear</button>
+        </div>
+        <p class="muted">PDF browser me hi banegi. Internet ya library ki zarurat nahi.</p>
+      </form>
+    </section>
 
-    "Debriefing-Add Pending": () => {
-      const today = new Date().toISOString().split('T')[0];
-      return `
-        <h2>Debriefing: Pending Returns Scan</h2>
-        <h3>RIDER RETURN DEBRIEFING</h3>
-
-        <div class="card" style="padding:18px;">
-          <div class="grid-2">
-            <div>
-              <label class="hint" style="display:block;margin-bottom:8px;color:#9f1239;font-weight:900;text-transform:uppercase;font-size:.78rem;">Station</label>
-              <input class="search-input" value="ATTOCK" disabled />
-            </div>
-            <div>
-              <label class="hint" style="display:block;margin-bottom:8px;color:#9f1239;font-weight:900;text-transform:uppercase;font-size:.78rem;">Date</label>
-              <input class="search-input" type="date" value="${today}" />
-            </div>
-            <div>
-              <label class="hint" style="display:block;margin-bottom:8px;color:#9f1239;font-weight:900;text-transform:uppercase;font-size:.78rem;">Emp #</label>
-              <input class="search-input" placeholder="Rider ID" />
-            </div>
-            <div>
-              <label class="hint" style="display:block;margin-bottom:8px;color:#9f1239;font-weight:900;text-transform:uppercase;font-size:.78rem;">Emp Name</label>
-              <input class="search-input" placeholder="Rider Name" />
-            </div>
-          </div>
-
-          <div style="margin-top:18px;background:#fff5f5;border:2px dashed #feb2b2;border-radius:14px;padding:18px;text-align:center;">
-            <div class="hint" style="color:#c53030;font-weight:950;text-transform:uppercase;font-size:.92rem;">Scan Returned Shipment (CN#)</div>
-            <input class="search-input" id="cnReturnScan" placeholder="SCAN CN HERE..." style="margin-top:10px;font-size:1.2rem;text-align:center;border-color:#fc8181;" />
-          </div>
-
-          <div style="margin-top:18px;padding-top:16px;border-top:1px solid #f1f5f9;">
-            <div class="grid-2">
-              ${[
-                ["Group Status","select","-SELECT-"],
-                ["Child Status","select","-SELECT-"],
-                ["Robo Resp","text",""],
-                ["Way Forward","text",""],
-                ["Status","select","-SELECT-"],
-                ["Preferred Date","date",""],
-                ["Attempt Time","time",""],
-                ["Address","text",""]
-              ].map(([label,type,placeholder]) => `
-                <div>
-                  <label class="hint" style="display:block;margin-bottom:8px;color:var(--text-secondary);font-weight:900;text-transform:uppercase;font-size:.78rem;">${label}</label>
-                  ${
-                    type === 'select'
-                      ? `<select class="search-input"><option value="">${placeholder}</option></select>`
-                      : `<input class="search-input" type="${type}" ${placeholder ? `placeholder="${placeholder}"` : ''} />`
-                  }
+    <section class="preview-shell" aria-label="Employee card preview">
+      <div class="preview-grid">
+        <div>
+          <p class="side-title">Front Side</p>
+          <div class="card-wrap">
+            <article class="employee-card" id="employeeCard">
+              <div class="card-header">
+                <div class="front-ribbon" aria-hidden="true"></div>
+                <div class="id-chip">STAFF ID</div>
+                <div class="logo">
+                  <span class="logo-box">L</span>
+                  <span>LEOPARDS</span>
                 </div>
-              `).join('')}
-            </div>
-
-            <div style="margin-top:18px;display:flex;justify-content:flex-end;">
-              <button class="btn btn-primary" style="background:var(--leopards-red);padding:14px 42px;border-radius:14px;letter-spacing:1px;box-shadow:0 10px 15px -3px rgba(190,18,60,.20);">
-                UPLOADING..!
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div style="margin-top:22px;display:grid;grid-template-columns:1fr 1fr;gap:18px;">
-          <div class="card" style="padding:0;overflow:hidden;">
-            <div style="padding:14px 16px;border-left:4px solid var(--leopards-red);display:flex;justify-content:space-between;align-items:center;">
-              <div style="font-weight:950;color:var(--text-main);">INPROGRESS & UN-DELIVERED (Mobile APP)</div>
-              <div class="hint">Count: <strong style="color:var(--leopards-red);">0</strong></div>
-            </div>
-            <div style="padding:12px 16px 18px;">
-              <div class="hint" style="font-style:italic;color:var(--text-muted);text-align:center;padding:26px 0;">No Data</div>
-            </div>
-          </div>
-
-          <div class="card" style="padding:0;overflow:hidden;">
-            <div style="padding:14px 16px;border-left:4px solid #22c55e;display:flex;justify-content:space-between;align-items:center;">
-              <div style="font-weight:950;color:var(--text-main);">UPDATED - DEBRIEFING</div>
-              <div class="hint">Count: <strong style="color:#22c55e;">0</strong></div>
-            </div>
-            <div style="padding:12px 16px 18px;">
-              <div class="hint" style="font-style:italic;color:var(--text-muted);text-align:center;padding:26px 0;">No Data</div>
-            </div>
-          </div>
-        </div>
-      `;
-    },
-
-    "Debriefing-Add Delivered": () => {
-      const today = new Date().toISOString().split('T')[0];
-      return `
-        <h2>Rider Delivery Debriefing (Delivered Scan)</h2>
-        <h3>RIDER DEBRIEFING - DELIVERED SCAN</h3>
-
-        <div class="card" style="padding:18px;">
-          <div class="grid-2">
-            <div>
-              <label class="hint" style="display:block;margin-bottom:8px;color:var(--text-secondary);font-weight:900;text-transform:uppercase;font-size:.78rem;">Station</label>
-              <input class="search-input" value="ATTOCK" disabled />
-            </div>
-            <div>
-              <label class="hint" style="display:block;margin-bottom:8px;color:var(--text-secondary);font-weight:900;text-transform:uppercase;font-size:.78rem;">Delivery Date</label>
-              <input class="search-input" type="date" value="${today}" />
-            </div>
-            <div>
-              <label class="hint" style="display:block;margin-bottom:8px;color:var(--text-secondary);font-weight:900;text-transform:uppercase;font-size:.78rem;">Rider / Emp #</label>
-              <input class="search-input" placeholder="Scan ID Card" />
-            </div>
-            <div>
-              <label class="hint" style="display:block;margin-bottom:8px;color:var(--text-secondary);font-weight:900;text-transform:uppercase;font-size:.78rem;">Rider Name</label>
-              <input class="search-input" placeholder="Verified Name" />
-            </div>
-          </div>
-
-          <div style="margin-top:18px;background:#f0fdf4;border:2px dashed #86efac;border-radius:14px;padding:18px;text-align:center;">
-            <div class="hint" style="color:#166534;font-weight:950;text-transform:uppercase;font-size:.92rem;">Scan Delivered Shipment (CN#)</div>
-            <input class="search-input" id="cnDeliveredScan" placeholder="SCAN CN HERE..." style="margin-top:10px;font-size:1.2rem;text-align:center;border-color:#4ade80;" />
-          </div>
-
-          <div style="margin-top:18px;padding-top:16px;border-top:1px solid #f1f5f9;">
-            <div class="grid-2">
-              <div>
-                <label class="hint" style="display:block;margin-bottom:8px;color:var(--text-secondary);font-weight:900;text-transform:uppercase;font-size:.78rem;">Receiver Relation</label>
-                <select class="search-input">
-                  <option value="">-- Select Relation --</option>
-                  <option>SELF</option>
-                  <option>FAMILY</option>
-                  <option>STAFF</option>
-                  <option>GUARD</option>
-                  <option>NEIGHBOR</option>
-                </select>
+                <div class="card-label">Courier Services</div>
+                <div class="leopard-photo" aria-hidden="true">
+                  <svg viewBox="0 0 360 96" role="img" aria-label="Leopard picture">
+                    <defs>
+                      <linearGradient id="frontSky" x1="0" x2="1" y1="0" y2="1">
+                        <stop offset="0" stop-color="#fff0a8"/>
+                        <stop offset="0.48" stop-color="#ffc400"/>
+                        <stop offset="1" stop-color="#6d4809"/>
+                      </linearGradient>
+                    </defs>
+                    <rect width="360" height="96" fill="url(#frontSky)"/>
+                    <circle cx="44" cy="24" r="10" fill="#111" opacity="0.95"/>
+                    <circle cx="86" cy="66" r="7" fill="#111" opacity="0.95"/>
+                    <circle cx="146" cy="30" r="8" fill="#111" opacity="0.95"/>
+                    <circle cx="222" cy="66" r="7" fill="#111" opacity="0.95"/>
+                    <circle cx="312" cy="26" r="9" fill="#111" opacity="0.95"/>
+                    <path d="M18 76 C68 42,121 38,173 54 C216 68,267 54,339 21 L360 96 L0 96 Z" fill="#111" opacity="0.14"/>
+                    <g fill="#111">
+                      <path d="M88 58 C115 25,183 22,240 45 C257 52,280 47,299 35 C288 58,260 73,221 72 C176 72,133 78,88 58Z"/>
+                      <path d="M239 42 C260 20,291 18,306 36 C290 41,276 50,260 62Z"/>
+                      <path d="M95 58 C70 51,52 54,32 69 C53 70,75 68,100 64Z"/>
+                      <path d="M121 66 L107 92 L126 92 L145 67Z"/>
+                      <path d="M179 69 L168 92 L187 92 L204 68Z"/>
+                      <path d="M233 66 L226 92 L245 92 L257 62Z"/>
+                      <path d="M278 49 L292 92 L309 92 L294 42Z"/>
+                    </g>
+                    <g fill="#ffc400">
+                      <circle cx="140" cy="45" r="4"/>
+                      <circle cx="163" cy="38" r="3"/>
+                      <circle cx="188" cy="45" r="4"/>
+                      <circle cx="213" cy="53" r="3"/>
+                      <circle cx="256" cy="39" r="3"/>
+                    </g>
+                  </svg>
+                </div>
               </div>
-              <div>
-                <label class="hint" style="display:block;margin-bottom:8px;color:var(--text-secondary);font-weight:900;text-transform:uppercase;font-size:.78rem;">Receiver Name / Contact</label>
-                <input class="search-input" placeholder="Name or Phone..." />
+
+              <div class="photo-frame">
+                <span id="photoPlaceholder">Upload<br>Photo</span>
+                <img id="photoPreview" alt="Employee photo">
               </div>
-            </div>
 
-            <div style="margin-top:18px;display:flex;justify-content:flex-end;">
-              <button class="btn btn-primary" style="background:#059669;padding:14px 42px;border-radius:14px;font-size:1.05rem;box-shadow:0 10px 15px -3px rgba(5,150,105,.20);">
-                SAVE DELIVERED SHIPMENT
-              </button>
-            </div>
+              <div class="card-body">
+                <h2 class="emp-name" id="cardName">Employee Name</h2>
+                <p class="emp-role" id="cardRole">Designation</p>
+                <span class="valid-badge">Valid Employee</span>
+
+                <div class="detail-list">
+                  <div class="detail-row">
+                    <strong>Dept</strong>
+                    <span id="cardDept">Operations</span>
+                  </div>
+                  <div class="detail-row">
+                    <strong>Employee ID</strong>
+                    <span id="cardId">27744</span>
+                  </div>
+                  <div class="detail-row">
+                    <strong>CNIC</strong>
+                    <span id="cardCnic">37106-0184546-5</span>
+                  </div>
+                  <div class="detail-row">
+                    <strong>Phone</strong>
+                    <span id="cardPhone">-</span>
+                  </div>
+                  <div class="detail-row">
+                    <strong>Date of Joining</strong>
+                    <span id="cardJoining">12-17-2021</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card-footer">www.leopardscourier.com | Authorized Employee</div>
+            </article>
           </div>
         </div>
 
-        <div style="margin-top:22px;" class="card">
-          <div style="padding:14px 16px;display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;">
-            <div style="display:flex;align-items:center;gap:10px;font-weight:950;color:var(--text-main);">
-              <span style="background:#059669;color:#fff;padding:4px 10px;border-radius:8px;font-size:.78rem;">SCANNED LIST</span>
-              Successfully Delivered in this Session
-            </div>
-            <div class="hint">Total Delivered: <strong style="color:#059669;">0</strong></div>
-          </div>
-          <div style="padding:18px 16px;">
-            <div class="hint" style="font-style:italic;color:var(--text-muted);text-align:center;padding:26px 0;">
-              No shipments scanned yet. Start scanning to populate this list.
-            </div>
+        <div>
+          <p class="side-title">Back Side</p>
+          <div class="card-wrap">
+            <article class="employee-card back-card" id="backCard">
+              <div class="back-hero">
+                <svg viewBox="0 0 390 218" role="img" aria-label="Leopard picture">
+                  <defs>
+                    <linearGradient id="backScene" x1="0" x2="1" y1="0" y2="1">
+                      <stop offset="0" stop-color="#ffe28a"/>
+                      <stop offset="0.45" stop-color="#ffc400"/>
+                      <stop offset="1" stop-color="#1a1306"/>
+                    </linearGradient>
+                  </defs>
+                  <rect width="390" height="218" fill="url(#backScene)"/>
+                  <g fill="#111" opacity="0.9">
+                    <circle cx="36" cy="55" r="9"/>
+                    <circle cx="82" cy="119" r="7"/>
+                    <circle cx="143" cy="40" r="8"/>
+                    <circle cx="207" cy="129" r="10"/>
+                    <circle cx="282" cy="58" r="7"/>
+                    <circle cx="344" cy="132" r="9"/>
+                  </g>
+                  <path d="M0 168 C76 112,128 125,197 142 C255 156,316 94,390 64 L390 218 L0 218Z" fill="#111" opacity="0.18"/>
+                  <g fill="#111">
+                    <path d="M72 130 C118 66,230 59,310 103 C323 110,348 97,372 72 C364 121,322 153,257 151 C188 151,129 163,72 130Z"/>
+                    <path d="M300 96 C329 58,371 54,389 86 C367 91,346 108,326 129Z"/>
+                    <path d="M81 130 C45 116,24 121,0 145 C29 146,57 143,91 137Z"/>
+                    <path d="M117 143 L92 218 L122 218 L155 139Z"/>
+                    <path d="M193 150 L171 218 L201 218 L231 145Z"/>
+                    <path d="M270 145 L259 218 L288 218 L307 132Z"/>
+                    <path d="M348 108 L367 218 L390 218 L370 92Z"/>
+                  </g>
+                  <g fill="#ffc400">
+                    <circle cx="141" cy="104" r="5"/>
+                    <circle cx="169" cy="92" r="4"/>
+                    <circle cx="203" cy="101" r="6"/>
+                    <circle cx="239" cy="116" r="4"/>
+                    <circle cx="284" cy="103" r="5"/>
+                    <circle cx="334" cy="88" r="4"/>
+                  </g>
+                </svg>
+              </div>
+
+              <div class="back-content">
+                <div class="back-brand">
+                  <span class="logo-box">L</span>
+                  <span>LEOPARDS</span>
+                </div>
+                <p class="back-note">This card is property of Leopards Courier Services. If found, please return it to the nearest branch.</p>
+
+                <div class="back-info">
+                  <div>
+                    <span>Employee</span>
+                    <strong id="backName">Employee Name</strong>
+                  </div>
+                  <div>
+                    <span>ID Number</span>
+                    <strong id="backId">LCS-001</strong>
+                  </div>
+                  <div>
+                    <span>Emergency / Branch</span>
+                    <strong id="backPhone">-</strong>
+                  </div>
+                </div>
+
+                <div class="signature-line">Authorized Signature</div>
+                <div class="barcode" aria-hidden="true"></div>
+              </div>
+            </article>
           </div>
         </div>
-      `;
-    },
-
-    "Debriefing-Delete Status": () => {
-      return `
-        <h2>Debriefing: Delete Status</h2>
-        <h3>Note: By default, the data will be sorted on 'status datetime' entered by staff.</h3>
-
-        <div class="card" style="padding:18px;margin-top:10px;">
-          <div class="grid-2">
-            <div>
-              <label class="hint" style="display:block;margin-bottom:8px;font-weight:950;">Search CN</label>
-              <input class="search-input" id="cnSearchInput" placeholder="Enter CN and press Enter..." />
-            </div>
-            <div style="display:flex;align-items:flex-end;">
-              <div class="hint" style="width:100%;color:var(--text-secondary);">Aging (Last AC to RC):</div>
-            </div>
-          </div>
-        </div>
-
-        <div style="margin-top:18px;">
-          <table class="oms-table">
-            <thead>
-              <tr>
-                <th>Sr#</th>
-                <th>CN Number</th>
-                <th>Route Date</th>
-                <th>Status Date</th>
-                <th>Status</th>
-                <th>Reason / Receiver (Relation)</th>
-                <th>Action</th>
-                <th>Rout - Officer</th>
-                <th>Station</th>
-                <th>Username</th>
-                <th>Status Updated On</th>
-                <th>Pic</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody id="delete-status-table-body">
-              <tr><td colspan="13" style="text-align:center;padding:40px;color:var(--text-muted);font-weight:750;">No Record..!</td></tr>
-            </tbody>
-          </table>
-        </div>
-      `;
-    }
-  };
-
-  // Report placeholders
-  const makeReportPage = (title) => () => `
-    <h2>Reports: ${__oms.escape(title)}</h2>
-    <h3>Generating detailed reports for ${__oms.escape(title)}.</h3>
-    <div class="placeholder" style="text-align:left;">
-      <p style="color:var(--text-secondary);font-weight:700;">
-        Report content for <strong>${__oms.escape(title)}</strong> will appear here.
-      </p>
-      <div style="margin-top:18px;display:flex;justify-content:flex-end;">
-        <button class="btn btn-primary">Generate Report</button>
       </div>
-    </div>
-  `;
+      <div class="status" id="statusText"></div>
+    </section>
+  </main>
 
-  const makeSummaryPage = (title) => () => `
-    <h2>${__oms.escape(title)} Summary</h2>
-    <h3>Operational summary views.</h3>
-    <div class="placeholder" style="text-align:left;">
-      <p style="color:var(--text-secondary);font-weight:700;">
-        Summary content for <strong>${__oms.escape(title)}</strong> will appear here.
-      </p>
-      <div style="margin-top:18px;display:flex;justify-content:flex-end;">
-        <button class="btn btn-primary">Generate Summary</button>
-      </div>
-    </div>
-  `;
-
-  // Dynamically handle report/summary/setup pages
-  (function registerDynamicPages(){
-    const register = (tab, fn) => { __oms.pages[tab] = fn; };
-
-    // Reports
-    [
-      "Reports-Debriefing Report","Reports-Assign Runsheet","Reports-Proof of Delivery","Reports-OSA Assign Report",
-      "Reports-Missing Signatures","Reports-Missing Geo Coords","Reports-Transport Mode Report","Reports-Shipper Advice Report",
-      "Reports-CN Booking Detail","Reports-Sheet Verification","Reports-DR Server","Reports-Runsheet Archive By CNs",
-      "Reports-Realtime Activity","Reports-Runsheet Archive","Reports-Online Assign Graph","Reports-Online History Trend",
-      "Reports-QSR As Of Date","Reports-Live Field Summary"
-    ].forEach(tab=>{
-      const title = tab.replace('Reports-','').replace(' Reports','');
-      register(tab, makeReportPage(title));
-    });
-
-    // Summary
-    [
-      "Summary-Performance","Summary-Mobile Delivery","Summary-Performance Assign","Summary-Balancesheet",
-      "Summary-E2E","Summary-Hub Balance","Summary-OSA","Summary-Overall","Summary-Data Upload"
-    ].forEach(tab=>{
-      const title = tab.replace('Summary-','');
-      register(tab, makeSummaryPage(title));
-    });
-
-    // Setup
-    register("Setup-Users", () => __oms.renderGenericPlaceholder("Setup: Users Management", "Manage user accounts and permissions."));
-    register("Setup-Riders", () => __oms.renderGenericPlaceholder("Setup: Riders Management", "Manage rider profiles and assignments."));
-
-    // Leopards + other placeholders
-    [
-      "Leopards-General","Leopards-COD Shift","Leopards-OSA","Leopards-Upfront Rider",
-      "Inter Transfer","Inter Transfer-RTN","Return to Shipper DSE","Rider Mobile Shipments",
-      "Mobile API Log","Update Missing Signs"
-    ].forEach(tab=>{
-      __oms.pages[tab] = () => __oms.renderGenericPlaceholder(tab, "This module is currently under development or configuration.");
-    });
-  })();
-
-  // ---------------- Page Hydration ----------------
-  __oms.hydratePage = (tabName) => {
-    // Debriefing run sheet search
-    if (tabName === 'Debriefing') {
-      const input = __oms.byId('runSheetSearch');
-      const clearBtn = __oms.byId('clearRunSheet');
-      const body = __oms.byId('runsheet-table-body');
-
-      const renderRows = (list) => {
-        body.innerHTML = list.map(rs => `
-          <tr>
-            <td style="font-weight:900;">${__oms.escape(rs.id)}</td>
-            <td>${__oms.escape(rs.courier)}</td>
-            <td style="font-weight:900;">${rs.delivered}/${rs.total}</td>
-            <td>${__oms.renderStatusPill(rs.status === 'Closed' ? 'Closed' : 'Pending')}</td>
-            <td>
-              ${rs.status === 'Pending'
-                ? `<button class="btn btn-primary" data-action="close-sheet" data-id="${__oms.escape(rs.id)}">Close Sheet</button>`
-                : `<button class="btn btn-muted" data-action="view-sheet" data-id="${__oms.escape(rs.id)}">View</button>`
-              }
-            </td>
-          </tr>
-        `).join('');
+  <script>
+    (function () {
+      var fields = {
+        name: document.getElementById('nameInput'),
+        id: document.getElementById('idInput'),
+        dept: document.getElementById('deptInput'),
+        role: document.getElementById('roleInput'),
+        cnic: document.getElementById('cnicInput'),
+        phone: document.getElementById('phoneInput'),
+        joining: document.getElementById('joiningInput')
       };
 
-      const filter = () => {
-        const term = (input.value || '').trim().toLowerCase();
-        const list = __oms.state.runSheets.filter(rs => rs.id.toLowerCase().includes(term));
-        renderRows(list);
+      var card = {
+        name: document.getElementById('cardName'),
+        id: document.getElementById('cardId'),
+        dept: document.getElementById('cardDept'),
+        role: document.getElementById('cardRole'),
+        cnic: document.getElementById('cardCnic'),
+        phone: document.getElementById('cardPhone'),
+        joining: document.getElementById('cardJoining')
       };
 
-      input.addEventListener('input', filter);
-      clearBtn.addEventListener('click', () => { input.value=''; filter(); });
-    }
-
-    // Control Tower search
-    if (tabName === 'Control Tower') {
-      const input = __oms.byId('shipmentSearch');
-      const clearBtn = __oms.byId('clearShipment');
-      const body = __oms.byId('exception-table-body');
-
-      const renderRows = (list) => {
-        body.innerHTML = list.map(ex => `
-          <tr class="${ex.status === 'Urgent' ? 'urgent-row' : ''}">
-            <td><strong>${__oms.escape(ex.shipmentId)}</strong></td>
-            <td>${__oms.escape(ex.reason)}</td>
-            <td>${__oms.renderStatusPill(ex.status)}</td>
-            <td>
-              ${ex.status === 'Urgent'
-                ? `<button class="btn btn-primary" data-action="acknowledge" data-id="${__oms.escape(ex.id)}">Acknowledge</button>`
-                : `<button class="btn btn-muted" data-action="view-exception" data-id="${__oms.escape(ex.id)}">View</button>`
-              }
-            </td>
-          </tr>
-        `).join('');
+      var backCard = {
+        name: document.getElementById('backName'),
+        id: document.getElementById('backId'),
+        phone: document.getElementById('backPhone')
       };
 
-      const filter = () => {
-        const term = (input.value || '').trim().toLowerCase();
-        const list = __oms.state.exceptions.filter(ex =>
-          ex.shipmentId.toLowerCase().includes(term) || ex.reason.toLowerCase().includes(term)
-        );
-        renderRows(list);
-      };
+      var photoInput = document.getElementById('photoInput');
+      var photoPreview = document.getElementById('photoPreview');
+      var photoPlaceholder = document.getElementById('photoPlaceholder');
+      var downloadBtn = document.getElementById('downloadBtn');
+      var frontPdfBtn = document.getElementById('frontPdfBtn');
+      var backPdfBtn = document.getElementById('backPdfBtn');
+      var employeeForm = document.getElementById('employeeForm');
+      var statusText = document.getElementById('statusText');
+      var templateImage = new Image();
+      templateImage.src = 'reference-card.jpg';
 
-      input.addEventListener('input', filter);
-      clearBtn.addEventListener('click', () => { input.value=''; filter(); });
-    }
+      function valueOrFallback(input, fallback) {
+        var value = input.value.replace(/\s+/g, ' ').trim();
+        return value || fallback;
+      }
 
-    // Delete status: Enter to search -> live fetch from LeopardOMS
-    if (tabName === 'Debriefing-Delete Status') {
-      const input = __oms.byId('cnSearchInput');
-      const body = __oms.byId('delete-status-table-body');
+      function updateCard() {
+        card.name.textContent = valueOrFallback(fields.name, 'AYAZ HUSSAIN SHAH');
+        card.id.textContent = valueOrFallback(fields.id, '27744');
+        card.dept.textContent = valueOrFallback(fields.dept, 'OPERATIONS');
+        card.role.textContent = valueOrFallback(fields.role, 'COD MANAGER');
+        card.cnic.textContent = valueOrFallback(fields.cnic, '37106-0184546-5');
+        card.phone.textContent = valueOrFallback(fields.phone, '-');
+        card.joining.textContent = valueOrFallback(fields.joining, '12-17-2021');
+        backCard.name.textContent = card.name.textContent;
+        backCard.id.textContent = card.id.textContent;
+        backCard.phone.textContent = card.phone.textContent;
+      }
 
-      const toRowsFromResponse = (data) => {
-        const list =
-          (Array.isArray(data) ? data : null) ||
-          (Array.isArray(data?.records) ? data.records : null) ||
-          (Array.isArray(data?.data) ? data.data : null) ||
-          (Array.isArray(data?.result) ? data.result : null) ||
-          [];
+      function setStatus(message, isError) {
+        statusText.textContent = message;
+        statusText.style.color = isError ? '#a92828' : '#287442';
+      }
 
-        if (!list.length) {
-          return `<tr><td colspan="13" style="text-align:center;padding:40px;color:var(--text-muted);font-weight:750;">No Record..!</td></tr>`;
+      Object.keys(fields).forEach(function (key) {
+        fields[key].addEventListener('input', updateCard);
+        fields[key].addEventListener('change', updateCard);
+      });
+
+      photoInput.addEventListener('change', function () {
+        var file = photoInput.files && photoInput.files[0];
+        if (!file) {
+          photoPreview.removeAttribute('src');
+          photoPreview.style.display = 'none';
+          photoPlaceholder.style.display = 'block';
+          return;
         }
 
-        return list.map((row, idx) => {
-          const cnNum = row.cn ?? row.CN ?? row.consignmentNumber ?? row.consignment_no ?? '';
-          const routeDate = row.routeDate ?? row.route_date ?? '';
-          const statusDate = row.statusDate ?? row.status_date ?? '';
-          const status = row.status ?? row.Status ?? row.currentStatus ?? '';
-          const reason = row.reason ?? row.reasonText ?? row.Receiver ?? row.receiver ?? '';
-          const receiverRel = row.receiverRelation ?? row.relation ?? '';
-          const routOfficer = row.routOfficer ?? row.RoutOfficer ?? row.officer ?? '';
-          const station = row.station ?? row.Station ?? '';
-          const username = row.username ?? row.user ?? '';
-          const updatedOn = row.updatedOn ?? row.updated_on ?? '';
+        if (!file.type.match(/^image\//)) {
+          setStatus('Please image file select karein.', true);
+          photoInput.value = '';
+          return;
+        }
 
-          const picUrl = row.picUrl ?? row.pic ?? row.photoUrl ?? '';
-          const picCell = picUrl
-            ? `<img alt="pic" src="${__oms.escape(picUrl)}" style="width:34px;height:34px;border-radius:8px;object-fit:cover;border:1px solid rgba(0,0,0,.08);" />`
-            : `<span style="color:var(--text-muted);font-weight:800;">-</span>`;
+        var reader = new FileReader();
+        reader.onload = function (event) {
+          photoPreview.src = event.target.result;
+          photoPreview.style.display = 'block';
+          photoPlaceholder.style.display = 'none';
+          setStatus('Photo card par lag gayi hai.', false);
+        };
+        reader.onerror = function () {
+          setStatus('Photo read nahi ho saki. Dusri image try karein.', true);
+        };
+        reader.readAsDataURL(file);
+      });
 
-          return `
-            <tr>
-              <td style="font-weight:900;">${idx + 1}</td>
-              <td>${__oms.escape(cnNum)}</td>
-              <td>${__oms.escape(routeDate)}</td>
-              <td>${__oms.escape(statusDate)}</td>
-              <td>${__oms.renderStatusPill(status || 'Pending')}</td>
-              <td>${__oms.escape(receiverRel ? receiverRel + ' - ' : '')}${__oms.escape(reason)}</td>
-              <td>
-                <button class="btn btn-primary" data-action="delete-status-row" data-index="${idx}" data-cn="${__oms.escape(cnNum)}" style="padding:8px 10px;font-size:.82rem;">
-                  Delete
-                </button>
-              </td>
-              <td>${__oms.escape(routOfficer)}</td>
-              <td>${__oms.escape(station)}</td>
-              <td>${__oms.escape(username)}</td>
-              <td>${__oms.escape(updatedOn)}</td>
-              <td>${picCell}</td>
-              <td>
-                <button class="btn btn-muted" data-action="view-status-row" data-index="${idx}" data-cn="${__oms.escape(cnNum)}" style="padding:8px 10px;font-size:.82rem;">
-                  View
-                </button>
-              </td>
-            </tr>
-          `;
-        }).join('');
-      };
+      employeeForm.addEventListener('reset', function () {
+        window.setTimeout(function () {
+          updateCard();
+          photoPreview.removeAttribute('src');
+          photoPreview.style.display = 'none';
+          photoPlaceholder.style.display = 'block';
+          setStatus('', false);
+        }, 0);
+      });
 
-      input.addEventListener('keydown', async (e) => {
-        if (e.key !== 'Enter') return;
-        e.preventDefault();
+      function drawRoundedRect(ctx, x, y, width, height, radius) {
+        ctx.beginPath();
+        ctx.moveTo(x + radius, y);
+        ctx.lineTo(x + width - radius, y);
+        ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+        ctx.lineTo(x + width, y + height - radius);
+        ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+        ctx.lineTo(x + radius, y + height);
+        ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+        ctx.lineTo(x, y + radius);
+        ctx.quadraticCurveTo(x, y, x + radius, y);
+        ctx.closePath();
+      }
 
-        const cn = (input.value || '').trim();
-        if (!cn) return;
+      function fitText(ctx, text, maxWidth, maxSize, minSize, fontWeight) {
+        var size = maxSize;
+        do {
+          ctx.font = fontWeight + ' ' + size + 'px Arial';
+          if (ctx.measureText(text).width <= maxWidth || size <= minSize) {
+            return size;
+          }
+          size -= 1;
+        } while (size >= minSize);
+        return minSize;
+      }
 
-        body.innerHTML = `<tr><td colspan="13" style="text-align:center;padding:40px;color:var(--text-muted);font-weight:850;">Searching for ${__oms.escape(cn)}...</td></tr>`;
+      function drawWrappedText(ctx, text, x, y, maxWidth, lineHeight, maxLines) {
+        var words = text.split(' ');
+        var line = '';
+        var lines = [];
 
+        for (var i = 0; i < words.length; i += 1) {
+          var testLine = line ? line + ' ' + words[i] : words[i];
+          if (ctx.measureText(testLine).width > maxWidth && line) {
+            lines.push(line);
+            line = words[i];
+          } else {
+            line = testLine;
+          }
+        }
+
+        if (line) {
+          lines.push(line);
+        }
+
+        lines = lines.slice(0, maxLines);
+        for (var j = 0; j < lines.length; j += 1) {
+          ctx.fillText(lines[j], x, y + (j * lineHeight));
+        }
+      }
+
+      function drawCoverImage(ctx, image, x, y, width, height) {
+        var sourceRatio = image.naturalWidth / image.naturalHeight;
+        var targetRatio = width / height;
+        var sx = 0;
+        var sy = 0;
+        var sw = image.naturalWidth;
+        var sh = image.naturalHeight;
+
+        if (sourceRatio > targetRatio) {
+          sw = image.naturalHeight * targetRatio;
+          sx = (image.naturalWidth - sw) / 2;
+        } else {
+          sh = image.naturalWidth / targetRatio;
+          sy = (image.naturalHeight - sh) / 2;
+        }
+
+        ctx.drawImage(image, sx, sy, sw, sh, x, y, width, height);
+      }
+
+      function drawLeopardPicture(ctx, x, y, width, height, large) {
+        var gradient = ctx.createLinearGradient(x, y, x + width, y + height);
+        gradient.addColorStop(0, '#fff0a8');
+        gradient.addColorStop(0.5, '#ffc400');
+        gradient.addColorStop(1, '#473005');
+        ctx.fillStyle = gradient;
+        ctx.fillRect(x, y, width, height);
+
+        ctx.fillStyle = '#111111';
+        ctx.globalAlpha = 0.94;
+        var spots = [
+          [x + width * 0.12, y + height * 0.25, large ? 9 : 6],
+          [x + width * 0.24, y + height * 0.68, large ? 7 : 4],
+          [x + width * 0.40, y + height * 0.30, large ? 8 : 5],
+          [x + width * 0.62, y + height * 0.68, large ? 9 : 5],
+          [x + width * 0.86, y + height * 0.28, large ? 8 : 6]
+        ];
+        for (var i = 0; i < spots.length; i += 1) {
+          ctx.beginPath();
+          ctx.arc(spots[i][0], spots[i][1], spots[i][2], 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.globalAlpha = 1;
+
+        ctx.fillStyle = 'rgba(17, 17, 17, 0.17)';
+        ctx.beginPath();
+        ctx.moveTo(x, y + height * 0.78);
+        ctx.bezierCurveTo(x + width * 0.22, y + height * 0.47, x + width * 0.36, y + height * 0.58, x + width * 0.52, y + height * 0.68);
+        ctx.bezierCurveTo(x + width * 0.70, y + height * 0.82, x + width * 0.84, y + height * 0.38, x + width, y + height * 0.25);
+        ctx.lineTo(x + width, y + height);
+        ctx.lineTo(x, y + height);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.save();
+        ctx.translate(x + width * (large ? 0.04 : 0.08), y + height * (large ? 0.22 : 0.24));
+        ctx.scale(width / (large ? 390 : 360), height / (large ? 218 : 96));
+        ctx.fillStyle = '#111111';
+        ctx.beginPath();
+        ctx.ellipse(190, large ? 82 : 40, large ? 120 : 84, large ? 38 : 27, -0.05, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.ellipse(292, large ? 50 : 24, large ? 31 : 22, large ? 27 : 19, -0.15, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillRect(112, large ? 104 : 58, large ? 16 : 12, large ? 55 : 28);
+        ctx.fillRect(176, large ? 110 : 59, large ? 15 : 12, large ? 50 : 27);
+        ctx.fillRect(247, large ? 103 : 57, large ? 15 : 12, large ? 58 : 30);
+        ctx.fillRect(326, large ? 76 : 48, large ? 13 : 10, large ? 82 : 35);
+        ctx.beginPath();
+        ctx.ellipse(64, large ? 90 : 50, large ? 64 : 42, large ? 8 : 6, -0.28, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#ffc400';
+        var markY = large ? 72 : 35;
+        ctx.beginPath(); ctx.arc(146, markY, large ? 6 : 4, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(184, markY - 8, large ? 5 : 3, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(222, markY + 4, large ? 6 : 4, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(268, markY + 15, large ? 5 : 3, 0, Math.PI * 2); ctx.fill();
+        ctx.restore();
+      }
+
+      function renderCardCanvas() {
+        var scale = 3;
+        var width = 390;
+        var height = 610;
+        var canvas = document.createElement('canvas');
+        canvas.width = width * scale;
+        canvas.height = height * scale;
+        var ctx = canvas.getContext('2d');
+        ctx.scale(scale, scale);
+
+        ctx.fillStyle = '#ffffff';
+        drawRoundedRect(ctx, 0, 0, width, height, 18);
+        ctx.fill();
+
+        ctx.save();
+        drawRoundedRect(ctx, 0, 0, width, height, 18);
+        ctx.clip();
+
+        ctx.fillStyle = '#111111';
+        ctx.fillRect(0, 0, width, 192);
+        ctx.fillStyle = '#ffc400';
+        ctx.beginPath();
+        ctx.moveTo(258, 0);
+        ctx.lineTo(width, 0);
+        ctx.lineTo(width, 74);
+        ctx.closePath();
+        ctx.fill();
+        ctx.fillStyle = '#ffc400';
+        drawRoundedRect(ctx, 256, 18, 92, 28, 14);
+        ctx.fill();
+        ctx.fillStyle = '#111111';
+        ctx.font = '900 11px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText('STAFF ID', 302, 36);
+        drawRoundedRect(ctx, 16, 82, 358, 96, 14);
+        ctx.save();
+        drawRoundedRect(ctx, 16, 82, 358, 96, 14);
+        ctx.clip();
+        drawLeopardPicture(ctx, 16, 82, 358, 96, false);
+        ctx.restore();
+
+        ctx.fillStyle = '#ffffff';
+        drawRoundedRect(ctx, 22, 24, 42, 42, 7);
+        ctx.fill();
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = '#111111';
+        ctx.stroke();
+        ctx.fillStyle = '#111111';
+        ctx.font = '900 22px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText('L', 43, 52);
+
+        ctx.textAlign = 'left';
+        ctx.fillStyle = '#ffffff';
+        ctx.font = '900 20px Arial';
+        ctx.fillText('LEOPARDS', 74, 52);
+        ctx.fillStyle = '#ffc400';
+        ctx.font = '900 12px Arial';
+        ctx.fillText('COURIER SERVICES', 24, 96);
+
+        ctx.fillStyle = '#ffffff';
+        drawRoundedRect(ctx, 126, 132, 138, 156, 12);
+        ctx.fill();
+        ctx.save();
+        drawRoundedRect(ctx, 131, 137, 128, 146, 8);
+        ctx.clip();
+        ctx.fillStyle = '#f4f6f9';
+        ctx.fillRect(131, 137, 128, 146);
+        if (photoPreview.src) {
+          drawCoverImage(ctx, photoPreview, 131, 137, 128, 146);
+        } else {
+          ctx.fillStyle = '#6c7583';
+          ctx.font = '700 15px Arial';
+          ctx.textAlign = 'center';
+          ctx.fillText('Upload', 195, 203);
+          ctx.fillText('Photo', 195, 223);
+        }
+        ctx.restore();
+
+        var name = card.name.textContent.toUpperCase();
+        var role = card.role.textContent.toUpperCase();
+        ctx.fillStyle = '#111111';
+        var nameSize = fitText(ctx, name, 330, 28, 17, '900');
+        ctx.font = '900 ' + nameSize + 'px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText(name, 195, 336);
+
+        ctx.fillStyle = '#d29d00';
+        var roleSize = fitText(ctx, role, 310, 15, 11, '900');
+        ctx.font = '900 ' + roleSize + 'px Arial';
+        ctx.fillText(role, 195, 360);
+
+        ctx.fillStyle = '#111111';
+        drawRoundedRect(ctx, 135, 371, 120, 26, 13);
+        ctx.fill();
+        ctx.fillStyle = '#ffc400';
+        ctx.font = '900 11px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText('VALID EMPLOYEE', 195, 388);
+
+        var rows = [
+          ['ID No', card.id.textContent],
+          ['Dept', card.dept.textContent],
+          ['Blood', card.blood.textContent],
+          ['Phone', card.phone.textContent],
+          ['Branch', card.address.textContent]
+        ];
+
+        ctx.textAlign = 'left';
+        var rowY = 418;
+        for (var i = 0; i < rows.length; i += 1) {
+          ctx.strokeStyle = '#eef1f5';
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(28, rowY + 20);
+          ctx.lineTo(362, rowY + 20);
+          ctx.stroke();
+
+          ctx.fillStyle = '#687386';
+          ctx.font = '900 12px Arial';
+          ctx.fillText(rows[i][0].toUpperCase(), 28, rowY);
+
+          ctx.fillStyle = '#172033';
+          ctx.font = '700 14px Arial';
+          drawWrappedText(ctx, rows[i][1], 128, rowY, 220, 17, i === 4 ? 2 : 1);
+          rowY += i === 4 ? 30 : 28;
+        }
+
+        ctx.fillStyle = '#111111';
+        ctx.fillRect(0, 552, width, 58);
+        ctx.fillStyle = '#ffffff';
+        ctx.font = '800 13px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText('www.leopardscourier.com | Authorized Employee', 195, 587);
+
+        ctx.restore();
+        return canvas;
+      }
+
+      function renderBackCardCanvas() {
+        var scale = 3;
+        var width = 390;
+        var height = 610;
+        var canvas = document.createElement('canvas');
+        canvas.width = width * scale;
+        canvas.height = height * scale;
+        var ctx = canvas.getContext('2d');
+        ctx.scale(scale, scale);
+
+        ctx.fillStyle = '#10131a';
+        drawRoundedRect(ctx, 0, 0, width, height, 18);
+        ctx.fill();
+        ctx.save();
+        drawRoundedRect(ctx, 0, 0, width, height, 18);
+        ctx.clip();
+
+        ctx.fillStyle = '#151b25';
+        ctx.fillRect(0, 0, width, height);
+        ctx.fillStyle = 'rgba(255, 196, 0, 0.18)';
+        ctx.beginPath();
+        ctx.arc(70, 112, 48, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = 'rgba(255, 196, 0, 0.12)';
+        ctx.beginPath();
+        ctx.arc(330, 486, 58, 0, Math.PI * 2);
+        ctx.fill();
+
+        drawLeopardPicture(ctx, 0, 0, width, 218, true);
+
+        ctx.fillStyle = '#ffffff';
+        drawRoundedRect(ctx, 28, 238, 42, 42, 7);
+        ctx.fill();
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = '#111111';
+        ctx.stroke();
+        ctx.fillStyle = '#111111';
+        ctx.font = '900 22px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText('L', 49, 266);
+
+        ctx.textAlign = 'left';
+        ctx.fillStyle = '#ffc400';
+        ctx.font = '900 23px Arial';
+        ctx.fillText('LEOPARDS', 82, 266);
+
+        ctx.fillStyle = '#dfe6f0';
+        ctx.font = '400 14px Arial';
+        drawWrappedText(ctx, 'This card is property of Leopards Courier Services. If found, please return it to the nearest branch.', 28, 315, 334, 20, 3);
+
+        var rows = [
+          ['Employee', backCard.name.textContent],
+          ['ID Number', backCard.id.textContent],
+          ['Emergency / Branch', backCard.phone.textContent]
+        ];
+        var y = 392;
+        for (var i = 0; i < rows.length; i += 1) {
+          ctx.fillStyle = '#99a4b5';
+          ctx.font = '900 11px Arial';
+          ctx.fillText(rows[i][0].toUpperCase(), 28, y);
+          ctx.fillStyle = '#ffffff';
+          ctx.font = '800 15px Arial';
+          drawWrappedText(ctx, rows[i][1], 28, y + 20, 320, 18, 1);
+          y += 52;
+        }
+
+        ctx.strokeStyle = '#ffc400';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(28, 532);
+        ctx.lineTo(190, 532);
+        ctx.stroke();
+        ctx.fillStyle = '#ffc400';
+        ctx.font = '900 12px Arial';
+        ctx.fillText('AUTHORIZED SIGNATURE', 28, 552);
+
+        ctx.fillStyle = '#ffffff';
+        for (var b = 0; b < 28; b += 1) {
+          var barWidth = b % 5 === 0 ? 5 : (b % 3 === 0 ? 3 : 2);
+          ctx.fillRect(225 + (b * 5), 512, barWidth, 48);
+        }
+
+        ctx.restore();
+        return canvas;
+      }
+
+      function dataUrlToBinary(dataUrl) {
+        var base64 = dataUrl.split(',')[1];
+        var raw = atob(base64);
+        var bytes = new Uint8Array(raw.length);
+        for (var i = 0; i < raw.length; i += 1) {
+          bytes[i] = raw.charCodeAt(i);
+        }
+        return bytes;
+      }
+
+      function asciiBytes(text) {
+        var bytes = new Uint8Array(text.length);
+        for (var i = 0; i < text.length; i += 1) {
+          bytes[i] = text.charCodeAt(i) & 255;
+        }
+        return bytes;
+      }
+
+      function concatBytes(parts) {
+        var total = 0;
+        for (var i = 0; i < parts.length; i += 1) {
+          total += parts[i].length;
+        }
+        var output = new Uint8Array(total);
+        var offset = 0;
+        for (var j = 0; j < parts.length; j += 1) {
+          output.set(parts[j], offset);
+          offset += parts[j].length;
+        }
+        return output;
+      }
+
+      function makePdfFromJpegs(jpegList, width, height) {
+        var parts = [asciiBytes('%PDF-1.4\n')];
+        var offsets = [0];
+        var currentOffset = parts[0].length;
+        var totalObjects = 2 + (jpegList.length * 3);
+        var kids = [];
+
+        function addBytes(bytes) {
+          parts.push(bytes);
+          currentOffset += bytes.length;
+        }
+
+        function addObject(id, body) {
+          offsets[id] = currentOffset;
+          addBytes(asciiBytes(id + ' 0 obj\n' + body + '\nendobj\n'));
+        }
+
+        function addImageObject(id, bytes) {
+          offsets[id] = currentOffset;
+          addBytes(asciiBytes(id + ' 0 obj\n<< /Type /XObject /Subtype /Image /Width ' + width + ' /Height ' + height + ' /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ' + bytes.length + ' >>\nstream\n'));
+          addBytes(bytes);
+          addBytes(asciiBytes('\nendstream\nendobj\n'));
+        }
+
+        for (var p = 0; p < jpegList.length; p += 1) {
+          kids.push((3 + (p * 3)) + ' 0 R');
+        }
+
+        addObject(1, '<< /Type /Catalog /Pages 2 0 R >>');
+        addObject(2, '<< /Type /Pages /Kids [' + kids.join(' ') + '] /Count ' + jpegList.length + ' >>');
+
+        for (var i = 0; i < jpegList.length; i += 1) {
+          var pageId = 3 + (i * 3);
+          var imageId = pageId + 1;
+          var contentId = pageId + 2;
+          var contentStream = 'q\n' + width + ' 0 0 ' + height + ' 0 0 cm\n/Im' + i + ' Do\nQ\n';
+          addObject(pageId, '<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ' + width + ' ' + height + '] /Resources << /XObject << /Im' + i + ' ' + imageId + ' 0 R >> >> /Contents ' + contentId + ' 0 R >>');
+          addImageObject(imageId, jpegList[i]);
+          addObject(contentId, '<< /Length ' + contentStream.length + ' >>\nstream\n' + contentStream + 'endstream');
+        }
+
+        var xrefOffset = currentOffset;
+        var xref = 'xref\n0 ' + (totalObjects + 1) + '\n0000000000 65535 f \n';
+        for (var k = 1; k <= totalObjects; k += 1) {
+          xref += String(offsets[k]).padStart(10, '0') + ' 00000 n \n';
+        }
+        xref += 'trailer\n<< /Size ' + (totalObjects + 1) + ' /Root 1 0 R >>\nstartxref\n' + xrefOffset + '\n%%EOF';
+        parts.push(asciiBytes(xref));
+
+        return new Blob([concatBytes(parts)], { type: 'application/pdf' });
+      }
+
+      function drawTemplateFront(ctx, width, height) {
+        ctx.fillStyle = '#f8f8f5';
+        drawRoundedRect(ctx, 0, 0, width, height, 18);
+        ctx.fill();
+        ctx.save();
+        drawRoundedRect(ctx, 0, 0, width, height, 18);
+        ctx.clip();
+
+        ctx.drawImage(templateImage, 48, 8, 545, 344, 0, 0, width, 246);
+        ctx.fillStyle = '#fbfbf8';
+        ctx.fillRect(0, 246, width, 262);
+        ctx.fillStyle = 'rgba(210, 210, 205, 0.16)';
+        ctx.font = '900 118px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText('LCS', 195, 438);
+        ctx.drawImage(templateImage, 48, 718, 545, 89, 0, 508, width, 64);
+
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.arc(195, 243, 83, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.lineWidth = 5;
+        ctx.strokeStyle = '#efb300';
+        ctx.stroke();
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(195, 243, 78, 0, Math.PI * 2);
+        ctx.clip();
+        ctx.fillStyle = '#f4f4f2';
+        ctx.fillRect(117, 165, 156, 156);
+        if (photoPreview.src) {
+          drawCoverImage(ctx, photoPreview, 117, 165, 156, 156);
+        } else {
+          ctx.fillStyle = '#777';
+          ctx.font = '700 15px Arial';
+          ctx.fillText('Upload', 195, 238);
+          ctx.fillText('Photo', 195, 258);
+        }
+        ctx.restore();
+
+        var name = card.name.textContent.toUpperCase();
+        var role = card.role.textContent.toUpperCase();
+        ctx.fillStyle = '#070707';
+        var nameSize = fitText(ctx, name, 320, 23, 15, '900');
+        ctx.font = '900 ' + nameSize + 'px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText(name, 195, 348);
+
+        ctx.fillStyle = '#d5a600';
+        var roleSize = fitText(ctx, role, 210, 13, 10, '900');
+        ctx.font = '900 ' + roleSize + 'px Arial';
+        ctx.fillText(role, 195, 368);
+
+        var rows = [
+          ['Department', card.dept.textContent],
+          ['Employee ID', card.id.textContent],
+          ['CNIC', card.cnic.textContent],
+          ['Phone', card.phone.textContent],
+          ['Date of Joining', card.joining.textContent]
+        ];
+        ctx.textAlign = 'left';
+        var y = 402;
+        for (var i = 0; i < rows.length; i += 1) {
+          ctx.fillStyle = '#111';
+          ctx.font = '400 14px Arial';
+          ctx.fillText(rows[i][0], 92, y);
+          ctx.font = '700 14px Arial';
+          ctx.fillText(':', 191, y);
+          ctx.font = '900 14px Arial';
+          ctx.fillText(rows[i][1], 212, y);
+          y += 22;
+        }
+
+        ctx.restore();
+      }
+
+      function renderCardCanvas() {
+        var scale = 8;
+        var width = 390;
+        var height = 572;
+        var canvas = document.createElement('canvas');
+        canvas.width = width * scale;
+        canvas.height = height * scale;
+        var ctx = canvas.getContext('2d');
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+        ctx.scale(scale, scale);
+        drawTemplateFront(ctx, width, height);
+        return canvas;
+      }
+
+      function renderBackCardCanvas() {
+        var scale = 8;
+        var width = 390;
+        var height = 572;
+        var canvas = document.createElement('canvas');
+        canvas.width = width * scale;
+        canvas.height = height * scale;
+        var ctx = canvas.getContext('2d');
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+        ctx.scale(scale, scale);
+        ctx.fillStyle = '#f8f8f5';
+        drawRoundedRect(ctx, 0, 0, width, height, 18);
+        ctx.fill();
+        ctx.save();
+        drawRoundedRect(ctx, 0, 0, width, height, 18);
+        ctx.clip();
+        ctx.drawImage(templateImage, 648, 8, 545, 799, 0, 0, width, height);
+        ctx.restore();
+        return canvas;
+      }
+
+      function savePdf(kind) {
         try {
-          // Use backend proxy to avoid CORS:
-          // GET /api/leopards-lookup?cn=<CN>
-          const url = `/api/leopards-lookup?cn=${encodeURIComponent(cn)}`;
-          const res = await fetch(url, { method: 'GET' });
+          updateCard();
 
-          if (!res.ok) {
-            const errText = await res.text().catch(() => '');
-            body.innerHTML = `<tr><td colspan="13" style="text-align:center;padding:40px;color:var(--leopards-red);font-weight:900;">
-              Proxy request failed: HTTP ${res.status}<br/>
-              ${errText ? ('<span style="color:var(--text-secondary);font-weight:800;">' + __oms.escape(errText).slice(0, 220) + '</span>') : ''}
-            </td></tr>`;
+          if (!templateImage.complete || !templateImage.naturalWidth) {
+            setStatus('Template image load ho rahi hai. 1 second baad dobara click karein.', true);
             return;
           }
 
-          const contentType = res.headers.get('content-type') || '';
-          if (contentType.includes('application/json')) {
-            const data = await res.json();
-            body.innerHTML = toRowsFromResponse(data);
-          } else {
-            const text = await res.text();
-            body.innerHTML = `<tr><td colspan="13" style="text-align:center;padding:40px;color:var(--text-muted);font-weight:750;">
-              Proxy returned non-JSON response.<br/>${__oms.escape(text).slice(0, 300)}
-            </td></tr>`;
+          var canvases = [];
+          if (kind === 'front' || kind === 'both') {
+            canvases.push(renderCardCanvas());
           }
-        } catch (err) {
-        body.innerHTML = `<tr><td colspan="13" style="text-align:center;padding:40px;color:var(--leopards-red);font-weight:900;">
-            Live fetch failed (likely CORS/network).<br/>
-            Solution: LeopardOMS ke liye server-side proxy/OMS endpoint enable karwana hoga.
-          </td></tr>`;
-          console.error('Live fetch error for CN:', cn, err);
+          if (kind === 'back' || kind === 'both') {
+            canvases.push(renderBackCardCanvas());
+          }
+
+          var jpegBytes = canvases.map(function (canvas) {
+            return dataUrlToBinary(canvas.toDataURL('image/jpeg', 1));
+          });
+          var pdfBlob = makePdfFromJpegs(jpegBytes, canvases[0].width, canvases[0].height);
+          var link = document.createElement('a');
+          var safeName = card.name.textContent.trim().replace(/[^a-z0-9]+/gi, '-').replace(/^-|-$/g, '') || 'employee';
+          link.href = URL.createObjectURL(pdfBlob);
+          link.download = 'leopards-' + safeName.toLowerCase() + '-card-' + kind + '-hd.pdf';
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          window.setTimeout(function () {
+            URL.revokeObjectURL(link.href);
+          }, 1000);
+          setStatus('HD PDF download ho gayi hai.', false);
+        } catch (error) {
+          setStatus('PDF download error: Chrome/Edge me file ko open karke dobara try karein.', true);
         }
+      }
+
+      downloadBtn.addEventListener('click', function () {
+        savePdf('both');
       });
-    }
 
-    // Delegate click handlers (acknowledge / close sheet)
-    // One listener per page render: fine because we reattach to main-display only once.
-    const display = __oms.byId('main-display');
-    display.onclick = (e) => {
-      const btn = e.target.closest('[data-action]');
-      if (!btn) return;
+      frontPdfBtn.addEventListener('click', function () {
+        savePdf('front');
+      });
 
-      const action = btn.getAttribute('data-action');
-      const id = btn.getAttribute('data-id');
-      const cn = btn.getAttribute('data-cn');
+      backPdfBtn.addEventListener('click', function () {
+        savePdf('back');
+      });
 
-      if (action === 'acknowledge') {
-        __oms.state.exceptions = __oms.state.exceptions.map(ex => ex.id === id ? {...ex, status:'Acknowledged'} : ex);
-        __oms.switchTab('Control Tower');
-        alert('Shipment ' + id + ' has been acknowledged in the system.');
-      }
-
-      if (action === 'close-sheet') {
-        __oms.state.runSheets = __oms.state.runSheets.map(rs => rs.id === id ? {...rs, status:'Closed'} : rs);
-        __oms.switchTab('Debriefing');
-        alert('Run Sheet ' + id + ' has been closed and updated.');
-      }
-
-      // Delete Status / View Status (LeopardOMS result rows)
-      // NOTE: Actual delete/view API not implemented (endpoint/schema not provided).
-      if (action === 'view-status-row') {
-        if (!cn) return;
-        alert('View CN: ' + cn + '\\n(Next step: open a details page or call a live VIEW endpoint once available.)');
-      }
-
-      if (action === 'delete-status-row') {
-        if (!cn) return;
-        const ok = confirm('Delete status record for CN: ' + cn + '? (Demo placeholder)');
-        if (!ok) return;
-        alert('Delete triggered for CN: ' + cn + '\\n(Next step: connect to the real DELETE endpoint after schema confirmation.)');
-      }
-    };
-  };
-
-  // ---------------- Nav click wiring ----------------
-  __oms.bindNav = () => {
-    const root = __oms.byId('navRoot');
-    root.addEventListener('click', (e) => {
-      const item = e.target.closest('.nav-item');
-      if (!item) return;
-      const tab = item.getAttribute('data-tab');
-      if (!tab) return;
-      __oms.switchTab(tab);
-    });
-
-    // Keyboard navigation (Enter)
-    root.addEventListener('keydown', (e) => {
-      const el = e.target;
-      if (!el || !el.getAttribute) return;
-      if ((e.key === 'Enter' || e.key === ' ') && el.classList.contains('nav-item')) {
-        e.preventDefault();
-        const tab = el.getAttribute('data-tab');
-        if (tab) __oms.switchTab(tab);
-      }
-    });
-  };
-
-  // ---------------- Init ----------------
-  document.addEventListener('DOMContentLoaded', () => {
-    __oms.bindNav();
-    __oms.updateDateTime();
-    setInterval(__oms.updateDateTime, 1000);
-    __oms.switchTab('Home');
-  });
-</script>
+      updateCard();
+    }());
+  </script>
 </body>
 </html>
